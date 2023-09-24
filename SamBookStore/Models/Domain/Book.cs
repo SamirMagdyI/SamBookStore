@@ -12,6 +12,7 @@ namespace SamBookStore.Models.Domain
 
         [Required]
         public string Isbn { get; set; }
+        public string ISBN { get; internal set; }
         [Required]
         public int TotalPages { get; set; }
 

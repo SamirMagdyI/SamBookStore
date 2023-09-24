@@ -5,7 +5,7 @@ using SamBookStore.Repositories.Abstract;
 
 namespace SamBookStore.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class GenreController : Controller
     {
         private readonly IGenreService service;

@@ -5,7 +5,7 @@ using SamBookStore.Repositories.Abstract;
 
 namespace SamBookStore.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class PublisherController : Controller
     {
         private readonly IPublisherService service;

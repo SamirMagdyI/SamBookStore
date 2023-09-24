@@ -6,7 +6,7 @@ using SamBookStore.Repositories.Abstract;
 
 namespace SamBookStore.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AuthorController : Controller
     {
         private readonly IAuthorService service;
@@ -67,6 +67,7 @@ namespace SamBookStore.Controllers
             return RedirectToAction("GetAll");
         }
 
+        [Authorize]
         public IActionResult GetAll()
         {
 

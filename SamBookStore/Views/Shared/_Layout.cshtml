@@ -31,24 +31,26 @@
             <li class="nav-item">
                 <a href="/ACCount/Login" class="nav-link">Log In</a>
             </li>
-        </ul>
-        }else{
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a href="/Genre/Add" class="nav-link">Genre</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/Author/Add" class="nav-link">Author</a>
-                </li>
-                <li class="nav-item active">
-                    <a href="/Publisher/Add" class="nav-link">Publisher</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/Book/Add" class="nav-link">Book</a>
-                </li>
             </ul>
-            <ul class="navbar-nav ml-auto">
-               
+        }else{
+            @if (User.IsInRole("Admin"))
+            {
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a href="/Genre/Add" class="nav-link">Genre</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Author/Add" class="nav-link">Author</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="/Publisher/Add" class="nav-link">Publisher</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Book/Add" class="nav-link">Book</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+
             
                 <li class="nav-item">
                     <label class="nav-link">@User.Identity.Name</label>
@@ -57,6 +59,24 @@
                     <a href="/ACCount/Logout" class="nav-link">Logout</a>
                     </li>
             </ul>
+            }else{
+                <ul class="navbar-nav mr-auto">
+                   
+                    <li class="nav-item">
+                        <a href="/Book/GetAll" class="nav-link">Book</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+
+
+                    <li class="nav-item">
+                        <label class="nav-link">@User.Identity.Name</label>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/ACCount/Logout" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+            }
         }
     </nav>
 

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SamBookStore.Models;
 using SamBookStore.Models.Domain;
 using SamBookStore.Repositories.Abstract;
 using SamBookStore.Repositories.Implementation;

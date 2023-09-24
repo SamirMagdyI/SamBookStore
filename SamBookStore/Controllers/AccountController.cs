@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection.XmlEncryption;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -12,12 +14,14 @@ namespace SamBookStore.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signinManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
 
             _userManager = userManager;
             _signinManager = signInManager;
+            _roleManager = roleManager;
         }
 
 
@@ -76,6 +80,52 @@ namespace SamBookStore.Controllers
             await _signinManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
 
+        }
+
+        [Authorize(Roles ="Admin")]
+        [HttpGet]
+        public async Task<IActionResult> AddAdmin(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                ModelState.AddModelError("", "Email cannot be empty.");
+                return View("Error");
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                ModelState.AddModelError("", "User not found.");
+                return View("Error");
+            }
+
+            if (!await _roleManager.RoleExistsAsync("Admin"))
+            {
+                ModelState.AddModelError("", "The 'Admin' role does not exist.");
+                return View("Error");
+            }
+
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                ModelState.AddModelError("", "User is already an admin.");
+                return View("Error");
+            }
+
+            var result = await _userManager.AddToRoleAsync(user, "Admin");
+
+            if (result.Succeeded)
+            {
+                return View(); // Show a success view or message
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View("Error");
+            }
         }
     }
 }

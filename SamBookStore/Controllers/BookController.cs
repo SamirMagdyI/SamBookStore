@@ -7,7 +7,7 @@ using SamBookStore.Repositories.Abstract;
 
 namespace SamBookStore.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class BookController : Controller
     {
         private readonly IBookService bookService;
@@ -86,7 +86,7 @@ namespace SamBookStore.Controllers
             var result = bookService.Delete(id);
             return RedirectToAction("GetAll");
         }
-
+        [Authorize]
         public IActionResult GetAll()
         {
 
