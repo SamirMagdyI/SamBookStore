@@ -12,16 +12,23 @@ namespace SamBookStore.Models.Domain
 
         [Required]
         public string Isbn { get; set; }
-        public string ISBN { get; internal set; }
+     
         [Required]
         public int TotalPages { get; set; }
 
         [Required]
+        [ForeignKey("Author")]
         public int AuthorId { get; set; }
         [Required]
+        [ForeignKey("Publisher")]
         public int PubhlisherId { get; set; }
         [Required]
+        [ForeignKey("Genre")]
         public int GenreId { get; set; }
+
+        public Author Author { get; set; }
+        public Publisher Publisher { get; set; }
+        public Genre Genre { get; set; }
 
         [NotMapped]
         public string ? AuthorName { get; set; }

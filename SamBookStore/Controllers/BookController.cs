@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SamBookStore.Models.Domain;
 using SamBookStore.Models.Domain;
+using SamBookStore.Models.Domain.ViewModels;
 using SamBookStore.Repositories.Abstract;
+using System.Reflection.Metadata.Ecma335;
 
 namespace SamBookStore.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    
     public class BookController : Controller
     {
         private readonly IBookService bookService;
@@ -15,12 +17,14 @@ namespace SamBookStore.Controllers
         private readonly IGenreService genreService;
         private readonly IPublisherService publisherService;
         public BookController(IBookService bookService, IGenreService genreService, IPublisherService publisherService,IAuthorService authorService)
+
         {
             this.bookService = bookService;
             this.genreService = genreService;
             this.publisherService = publisherService;
             this.authorService = authorService;
         }
+        [Authorize(Roles = "Admin")]
         public IActionResult Add()
         {
             var model = new Book();
@@ -30,6 +34,7 @@ namespace SamBookStore.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Add(Book model)
         {
@@ -50,7 +55,7 @@ namespace SamBookStore.Controllers
             return View(model);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int id)
         {
             var model = bookService.FindById(id);
@@ -59,7 +64,7 @@ namespace SamBookStore.Controllers
             model.GenreList = genreService.GetAll().Select(a => new SelectListItem { Text = a.Name, Value = a.Id.ToString(), Selected = a.Id == model.GenreId }).ToList();
             return View(model);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Update(Book model)
         {
@@ -79,7 +84,7 @@ namespace SamBookStore.Controllers
             return View(model);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
 
@@ -89,9 +94,27 @@ namespace SamBookStore.Controllers
         [Authorize]
         public IActionResult GetAll()
         {
-
-            var data = bookService.GetAll();
+            GetALLViewModel data = this.getallGenresPubisherAuthros();
+             data.Books = bookService.GetAll().ToList();
             return View(data);
+        }
+
+        [Authorize]
+        public IActionResult Search(string BookNameSearch, int SelectedGenreId, int SelectedAuthorId, int SelectedPublisherId)
+        {
+            GetALLViewModel data = this.getallGenresPubisherAuthros();
+            data.Books = bookService.Filter(BookNameSearch, SelectedGenreId, SelectedPublisherId, SelectedAuthorId);
+            return View("GetAll", data) ; 
+        }
+
+        [NonAction]
+        private GetALLViewModel getallGenresPubisherAuthros()
+        {
+            GetALLViewModel data = new GetALLViewModel();
+            data.Authors = authorService.GetAll().ToList();
+            data.Publishers = publisherService.GetAll().ToList();
+            data.Genres = genreService.GetAll().ToList();
+            return data;
         }
     }
 }

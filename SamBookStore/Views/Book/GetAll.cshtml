@@ -1,15 +1,60 @@
-﻿@model IEnumerable<SamBookStore.Models.Domain.Book>
+﻿@model SamBookStore.Models.Domain.ViewModels.GetALLViewModel
 @{
+    SelectList genres = new SelectList(Model.Genres, "Id", "Name");
+    SelectList publishers = new SelectList(Model.Publishers, "Id", "PublisherName");
+    SelectList authors = new SelectList(Model.Authors, "Id","AuthorName");
+
 }
 
 <div class="container pt-3">
-    <div class="row">
-        <div class="col-md-12">
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="row">
+            <div class="col-md-12">
             <a class="btn btn-dark" href="/Book/Add">+ Add more</a>
+            </div>
         </div>
-    </div>
+    }
     <div class="row">
         <div class="col-md-12">
+            <form asp-action="Search" asp-route-BookNameSearch="@Model.BookNameSearch" asp-route-SelectedPublisherId="@Model.SelectedPublisherId" asp-route-SelectedAuthorId="@Model.SelectedAuthorId" asp-route-SelectedGenreId="@Model.SelectedGenreId">
+                <div class="form-group row">
+                    <label asp-for="BookNameSearch" class="col-md-2 col-form-label"></label>
+                    <input asp-for="BookNameSearch" />
+                </div >
+                <div class="form-group row">
+                    <label asp-for="SelectedGenreId" class="col-md-2 col-form-label">Genre</label>
+                    <select  asp-items="genres" asp-for="SelectedGenreId" >
+                        <option value="0" >Genre</option>
+                    </select>
+                </div>
+
+                <div class="form-group row">
+                    <label asp-for="SelectedAuthorId" class="col-md-2 col-form-label">Author</label>
+                    <select asp-items="authors" asp-for="SelectedAuthorId">
+                        <option value="0">Author Name</option>
+                    </select>
+                </div>
+
+                <div class="form-group row">
+                    <label asp-for="SelectedPublisherId" class="col-md-2 col-form-label">publisher</label>
+                    <select asp-items="publishers" asp-for="SelectedPublisherId">
+                        <option value="0">Publisher Name</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-dark">Search</button>
+                    </div>
+                </div>
+
+
+            </form>
+           
+            
+
+
             <h3>Books</h3>
 
             <table  class="table table-stripped table-bordered table-dark">
@@ -21,18 +66,21 @@
                         <th>Total Pages</th>
                         <th>Author</th>
                         <th>Publisher</th>
-                        <th>Action</th>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <th>Action</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var item in Model){
+                    @foreach(var item in Model.Books){
                     <tr>
                             <td>@item.Title</td>
-                            <td>@item.GenreName</td>
+                            <td>@item.Genre.Name</td>
                             <td>@item.Isbn</td>
                             <td>@item.TotalPages</td>
-                            <td>@item.AuthorName</td>
-                            <td>@item.PublisherName</td>
+                            <td>@item.Author.AuthorName</td>
+                            <td>@item.Publisher.PublisherName</td>
                             @if(User.IsInRole("Admin")){
                         <td>
                                 <a class="btn btn-success" href="/Book/Update?id=@item.Id"><i class="bi bi-pen"></i></a> |
